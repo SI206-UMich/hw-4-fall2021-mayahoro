@@ -71,8 +71,39 @@ class Cashier:
 
 ## Complete the Stall class here following the instructions in HW_4_instructions_rubric
 class Stall:
+    def __init__(self, name, inventory, cost=7, earnings=0):
+        self.name = name
+        self.inventory = {inventory}
+        self.earnings = earnings 
+        self.cost = cost
     
-    pass
+    def process_order(self, name, quantity):
+        for i in self.inventory:
+            if self.inventory[i] == name:
+                self.inventory[i]-=1
+                self.earnings = self.earnings+self.cost*quantity
+    
+    def hasFood(self, name, quantity):
+        if self.inventory[name]<quantity:
+            return False
+        else:
+            return True
+
+    def stock_up(self, name, quantity):
+        for i in self.inventory:
+            if name == self.inventory[i]:
+                self.inventory[i]+=quantity
+            else:
+                self.inventory[name] = quantity
+    
+    def compute_cost(self, quantity):
+        return self.cost*quantity
+    
+    def __str__(self):
+        return "Hello, we are "+ self.name+". This is the current menu "+self.inventory.keys+". We charge $"+self.cost+" per item. We have $"+self.earnings+" in total."
+
+	
+    
 
 
 class TestAllMethods(unittest.TestCase):
@@ -179,6 +210,10 @@ class TestAllMethods(unittest.TestCase):
 ### Write main function
 def main():
     #Create different objects 
+    j = Customer('Jake',400)
+    m = Customer('Maya', 95)
+    a = Stall('Chinese',{'white rice':12,'noodles':30, 'chicken':20},5,500)
+    k = Stall('Sushi',{'california roll':10,'shrimp':20, 'chicken':20},7,100)
 
     #Try all cases in the validate_order function
     #Below you need to have *each customer instance* try the four cases
@@ -190,7 +225,7 @@ def main():
     
     #case 4: the customer successfully places an order
 
-    pass
+    
 
 if __name__ == "__main__":
 	main()
