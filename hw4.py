@@ -1,7 +1,7 @@
 
 import unittest
 
-# The Customer class
+# The Customer class IS THIS GIT
 # The Customer class represents a customer who will order from the stalls.
 class Customer: 
     # Constructor
@@ -28,7 +28,7 @@ class Customer:
     # Submit_order takes a cashier, a stall and an amount as parameters, 
     # it deducts the amount from the customer’s wallet and calls the receive_payment method on the cashier object
     def submit_order(self, cashier, stall, amount): 
-        pass
+        self.wallet -= Cashier.receive_payment(Cashier , stall, amount)
 
     # The __str__ method prints the customer's information.    
     def __str__(self):
@@ -73,21 +73,21 @@ class Cashier:
 class Stall:
     def __init__(self, name, inventory, cost=7, earnings=0):
         self.name = name
-        self.inventory = {inventory}
+        self.inventory = inventory
         self.earnings = earnings 
         self.cost = cost
     
     def process_order(self, name, quantity):
-        for i in self.inventory:
-            if self.inventory[i] == name:
-                self.inventory[i]-=1
-                self.earnings = self.earnings+self.cost*quantity
-    
-    def hasFood(self, name, quantity):
         if self.inventory[name]<quantity:
-            return False
-        else:
-            return True
+            self.inventory[name]-=quantity
+            self.earnings = self.earnings+(self.cost*quantity)
+    
+    def has_item(self, name, quantity):
+        if name in self.inventory:
+            if self.inventory[name]>quantity:
+               return True
+            else:
+                return False
 
     def stock_up(self, name, quantity):
         for i in self.inventory:
@@ -178,11 +178,12 @@ class TestAllMethods(unittest.TestCase):
     def test_compute_cost(self):
         #what's wrong with the following statements?
         #can you correct them?
-        self.assertEqual(self.s1.compute_cost(self.s1,5), 51)
-        self.assertEqual(self.s3.compute_cost(self.s3,6), 45)
+        self.assertEqual(self.s3.compute_cost(self.s1), 51)
+        self.assertEqual(self.s3.compute_cost(6), 42)
 
 	# Check that the stall can properly see when it is empty
     def test_has_item(self):
+        self.assertEqual(self.s3.has_item('Chicken', 10), False)
         # Set up to run test cases
 
         # Test to see if has_item returns True when a stall has enough items left
@@ -190,14 +191,17 @@ class TestAllMethods(unittest.TestCase):
         # Test case 1: the stall does not have this food item: 
         
         # Test case 2: the stall does not have enough food item: 
-        
+        self.assertEqual(self.s1.has_item('Taco',70),False)
         # Test case 3: the stall has the food item of the certain quantity: 
-        pass
+        self.assertEqual(self.s1.has_item('Burger',10), True)
 
 	# Test validate order
     def test_validate_order(self):
-		# case 1: test if a customer doesn't have enough money in their wallet to order
 
+		# case 1: test if a customer doesn't have enough money in their wallet to order
+        self.f1.wallet = 140
+        self.f1.validate_order(self.c1,self.s1,'Taco',10)
+        self.assertEqual(self.f1.wallet,140)
 		# case 2: test if the stall doesn't have enough food left in stock
 
 		# case 3: check if the cashier can order item from that stall
@@ -210,17 +214,31 @@ class TestAllMethods(unittest.TestCase):
 ### Write main function
 def main():
     #Create different objects 
-    j = Customer('Jake',400)
-    m = Customer('Maya', 95)
-    a = Stall('Chinese',{'white rice':12,'noodles':30, 'chicken':20},5,500)
-    k = Stall('Sushi',{'california roll':10,'shrimp':20, 'chicken':20},7,100)
+    yum = {'chicken':18, 'rice':20, 'burger':8}
+    snack = {'popcorn':5, 'candy':8, 'chips':10}
+    jake = Customer('Jake',400)
+    maya = Customer('Maya', 95)
+    jen = Customer('Jen',40)
+    dinner = Stall('Dinner',yum,5,500)
+    snacks = Stall('Snack',snack,7,100)
+    kevin = Cashier('Kevin',[dinner])
+    charles = Cashier('Charles',[snacks])
+
+
+ 
 
     #Try all cases in the validate_order function
-    #Below you need to have *each customer instance* try the four cases
-    #case 1: the cashier does not have the stall 
+    jake.validate_order(kevin,snack, 'rice', 5)
+    maya.validate_order(charles, dinner, 'burger', 3)
+    jen.validate_order(kevin,snack,'pizza',9)
+
     
+    
+
     #case 2: the casher has the stall, but not enough ordered food or the ordered food item
-    
+    jake.validate_order(charles,snacks,'candy',25)
+    jen.validate_order(kevin,dinner,'popcorn',5)
+    maya.validate_order(charles,snack,'burger',10)
     #case 3: the customer does not have enough money to pay for the order: 
     
     #case 4: the customer successfully places an order
