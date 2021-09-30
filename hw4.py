@@ -30,7 +30,7 @@ class Customer:
     def submit_order(self, cashier, stall, amount): 
         cashier.receive_payment(stall, amount)
         self.wallet-= amount
-        self.stall+= amount
+        
         # self.wallet -= Cashier.receive_payment(Cashier , stall, amount)
 
     # The __str__ method prints the customer's information.    
@@ -250,21 +250,21 @@ def main():
     jake.wallet= 10
     jake.validate_order(charles,snacks,'candy',2)
     
-    jen.wallet = 0 
+    jen.wallet = 10
     dinner.stock_up('popcorn',5)
     jen.validate_order(kevin,dinner,'popcorn',4)
     
-    maya.wallet = 0
+    maya.wallet =10
     snacks.stock_up('chips',10)
     maya.validate_order(charles,snacks,'chips',1)
     
     #case 4: the customer successfully places an order
     #snacks.stock_up('candy', 10)
-    jake.validate_order(charles,snacks,'candy',2)
+    jake.validate_order(charles,snacks,'candy',0)
     
 
     #dinner.stock_up('popcorn',10)
-    jen.validate_order(kevin,dinner,'popcorn',1)
+    jen.validate_order(kevin,dinner,'burger',1)
     
     #snacks.stock_up('candy',10)
     maya.validate_order(charles,snacks,'candy',1)
