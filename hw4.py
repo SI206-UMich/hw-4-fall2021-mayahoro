@@ -1,7 +1,7 @@
 
 import unittest
 
-# The Customer class IS THIS GIT
+# The Customer class IS THIS GIT?
 # The Customer class represents a customer who will order from the stalls.
 class Customer: 
     # Constructor
@@ -28,7 +28,10 @@ class Customer:
     # Submit_order takes a cashier, a stall and an amount as parameters, 
     # it deducts the amount from the customer’s wallet and calls the receive_payment method on the cashier object
     def submit_order(self, cashier, stall, amount): 
-        self.wallet -= Cashier.receive_payment(Cashier , stall, amount)
+        cashier.receive_payment(stall, amount)
+        self.wallet-= amount
+        self.stall+= amount
+        # self.wallet -= Cashier.receive_payment(Cashier , stall, amount)
 
     # The __str__ method prints the customer's information.    
     def __str__(self):
@@ -88,19 +91,19 @@ class Stall:
                return True
             else:
                 return False
+        return False
 
     def stock_up(self, name, quantity):
-        for i in self.inventory:
-            if name == self.inventory[i]:
-                self.inventory[i]+=quantity
-            else:
-                self.inventory[name] = quantity
+        if name in self.inventory.keys():
+            self.inventory[name]+=quantity
+        else:
+            self.inventory[name] = quantity
     
     def compute_cost(self, quantity):
         return self.cost*quantity
     
     def __str__(self):
-        return "Hello, we are "+ self.name+". This is the current menu "+self.inventory.keys+". We charge $"+self.cost+" per item. We have $"+self.earnings+" in total."
+        return "Hello, we are "+ self.name+". This is the current menu "+self.inventory.keys()+". We charge $"+str(self.cost)+" per item. We have $"+str(self.earnings)+" in total."
 
 	
     
@@ -178,7 +181,7 @@ class TestAllMethods(unittest.TestCase):
     def test_compute_cost(self):
         #what's wrong with the following statements?
         #can you correct them?
-        self.assertEqual(self.s3.compute_cost(self.s1), 51)
+        self.assertEqual(self.s1.compute_cost(5), 50)
         self.assertEqual(self.s3.compute_cost(6), 42)
 
 	# Check that the stall can properly see when it is empty
@@ -199,28 +202,31 @@ class TestAllMethods(unittest.TestCase):
     def test_validate_order(self):
 
 		# case 1: test if a customer doesn't have enough money in their wallet to order
-        self.f1.wallet = 140
         self.f1.validate_order(self.c1,self.s1,'Taco',10)
-        self.assertEqual(self.f1.wallet,140)
 		# case 2: test if the stall doesn't have enough food left in stock
-
+        self.f1.validate_order(self.c1,self.s1,'Taco',100)
 		# case 3: check if the cashier can order item from that stall
-        pass
+        self.f1.validate_order(self.c1,self.s1,'Taco',1)
 
     # Test if a customer can add money to their wallet
     def test_reload_money(self):
-        pass
+        self.f1.wallet = 40
+        self.f1.reload_money(15)
+        self.assertEqual(self.f1.wallet, 55)
     
 ### Write main function
 def main():
     #Create different objects 
     yum = {'chicken':18, 'rice':20, 'burger':8}
     snack = {'popcorn':5, 'candy':8, 'chips':10}
+
     jake = Customer('Jake',400)
     maya = Customer('Maya', 95)
     jen = Customer('Jen',40)
+
     dinner = Stall('Dinner',yum,5,500)
     snacks = Stall('Snack',snack,7,100)
+
     kevin = Cashier('Kevin',[dinner])
     charles = Cashier('Charles',[snacks])
 
@@ -228,9 +234,9 @@ def main():
  
 
     #Try all cases in the validate_order function
-    jake.validate_order(kevin,snack, 'rice', 5)
+    jake.validate_order(kevin,snacks, 'rice', 5)
     maya.validate_order(charles, dinner, 'burger', 3)
-    jen.validate_order(kevin,snack,'pizza',9)
+    jen.validate_order(kevin,snacks,'pizza',9)
 
     
     
@@ -238,10 +244,30 @@ def main():
     #case 2: the casher has the stall, but not enough ordered food or the ordered food item
     jake.validate_order(charles,snacks,'candy',25)
     jen.validate_order(kevin,dinner,'popcorn',5)
-    maya.validate_order(charles,snack,'burger',10)
+    maya.validate_order(charles,snacks,'burger',10)
+
     #case 3: the customer does not have enough money to pay for the order: 
+    jake.wallet= 10
+    jake.validate_order(charles,snacks,'candy',2)
+    
+    jen.wallet = 0 
+    dinner.stock_up('popcorn',5)
+    jen.validate_order(kevin,dinner,'popcorn',4)
+    
+    maya.wallet = 0
+    snacks.stock_up('chips',10)
+    maya.validate_order(charles,snacks,'chips',1)
     
     #case 4: the customer successfully places an order
+    #snacks.stock_up('candy', 10)
+    jake.validate_order(charles,snacks,'candy',2)
+    
+
+    #dinner.stock_up('popcorn',10)
+    jen.validate_order(kevin,dinner,'popcorn',1)
+    
+    #snacks.stock_up('candy',10)
+    maya.validate_order(charles,snacks,'candy',1)
 
     
 
@@ -249,3 +275,8 @@ if __name__ == "__main__":
 	main()
 	print("\n")
 	unittest.main(verbosity = 2)
+
+
+
+
+                  
