@@ -1,3 +1,6 @@
+#Maya Horowitz
+#84630641
+#mayahoro@umich.edu
 
 import unittest
 
